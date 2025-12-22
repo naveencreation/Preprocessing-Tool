@@ -11,6 +11,7 @@ import { ExportPanel } from "@/components/ExportPanel";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload,
@@ -44,7 +45,10 @@ function Sidebar() {
     <div className="w-64 border-r bg-muted/30 flex flex-col">
       {/* Header */}
       <div className="p-6 border-b">
-        <h1 className="text-xl font-bold">ML Preprocessor</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold">ML Preprocessor</h1>
+          <ThemeToggle />
+        </div>
         <p className="text-sm text-muted-foreground mt-1">
           Data preparation wizard
         </p>
