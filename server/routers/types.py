@@ -200,6 +200,21 @@ async def update_types(request: UpdateTypesRequest):
         typed_path = session_path / "data_typed.parquet"
         df.to_parquet(typed_path, index=False)
         
+        # Log pipeline step if any columns were updated
+        if updated:
+            from pipeline.manifest import append_step, build_type_casting_step
+            operations = []
+            for mapping in request.type_mappings:
+                if mapping.column in updated:
+                    # Map target_type to short form for pipeline
+                    type_map = {"Numeric": "float", "DateTime": "datetime", "Categorical": "category"}
+                    operations.append({
+                        "column": mapping.column,
+                        "to": type_map.get(mapping.target_type, mapping.target_type.lower())
+                    })
+            step = build_type_casting_step(operations)
+            append_step(session_path, step)
+        
         # Get updated column info
         columns = []
         for col in df.columns:

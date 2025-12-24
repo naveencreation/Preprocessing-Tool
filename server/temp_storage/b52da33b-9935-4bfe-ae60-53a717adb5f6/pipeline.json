@@ -1,0 +1,60 @@
+{
+  "version": "1.0",
+  "created_at": "2025-12-24T11:19:08.917295Z",
+  "dataset": {
+    "rows": 26,
+    "columns": 10
+  },
+  "steps": [
+    {
+      "type": "cleaning",
+      "remove_duplicates": false,
+      "missing_values": [
+        {
+          "column": "age",
+          "strategy": "drop"
+        },
+        {
+          "column": "income",
+          "strategy": "drop"
+        },
+        {
+          "column": "join_date",
+          "strategy": "drop"
+        },
+        {
+          "column": "country",
+          "strategy": "drop"
+        },
+        {
+          "column": "gender",
+          "strategy": "mode"
+        },
+        {
+          "column": "is_active",
+          "strategy": "drop"
+        },
+        {
+          "column": "score",
+          "strategy": "mode"
+        },
+        {
+          "column": "category_multi",
+          "strategy": "mode"
+        },
+        {
+          "column": "comments",
+          "strategy": "drop"
+        }
+      ],
+      "applied_at": "2025-12-24T11:20:08.673245Z"
+    },
+    {
+      "type": "split",
+      "test_size": 0.2,
+      "random_state": 42,
+      "shuffle": true,
+      "applied_at": "2025-12-24T11:20:31.908874Z"
+    }
+  ]
+}

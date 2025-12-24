@@ -8,6 +8,7 @@ import {
     AlertCircle,
     Check,
     PartyPopper,
+    Code,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -100,6 +101,48 @@ export function ExportPanel() {
             window.URL.revokeObjectURL(url);
 
             toast.success("Download complete", { description: `${dataset}_data.${format}` });
+        } catch (e) {
+            const message = e instanceof Error ? e.message : "Download failed";
+            toast.error("Error", { description: message });
+        } finally {
+            setDownloading(null);
+        }
+    };
+
+    const handleDownloadPipeline = async () => {
+        if (!sessionId) return;
+
+        setDownloading("pipeline");
+
+        try {
+            const response = await fetch(`/api/export/pipeline/${sessionId}?format=pandas`);
+
+            if (!response.ok) {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    const err: ApiError = await response.json();
+                    throw new Error(err.detail || "Download failed");
+                }
+                throw new Error(`Download failed: ${response.status}`);
+            }
+
+            const text = await response.text();
+
+            if (!text) {
+                throw new Error("Downloaded file is empty");
+            }
+
+            const blob = new Blob([text], { type: "text/x-python;charset=utf-8" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "preprocessing_pipeline.py";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            toast.success("Pipeline downloaded", { description: "preprocessing_pipeline.py" });
         } catch (e) {
             const message = e instanceof Error ? e.message : "Download failed";
             toast.error("Error", { description: message });
@@ -286,6 +329,35 @@ export function ExportPanel() {
                     </CardContent>
                 </Card>
             )}
+
+            {/* Python Pipeline Export */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Code className="h-5 w-5" />
+                        Reproducible Pipeline
+                    </CardTitle>
+                    <CardDescription>
+                        Download Python code that reproduces all preprocessing steps
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Button
+                        variant="default"
+                        className="w-full justify-start gap-3 h-auto py-4"
+                        onClick={handleDownloadPipeline}
+                        disabled={downloading === "pipeline"}
+                    >
+                        {downloading === "pipeline" ? <Spinner size="sm" /> : <Code className="h-5 w-5" />}
+                        <div className="text-left">
+                            <p className="font-medium">Download Python Pipeline</p>
+                            <p className="text-xs opacity-80">Standalone script with pandas & scikit-learn</p>
+                        </div>
+                        <Download className="h-4 w-4 ml-auto" />
+                    </Button>
+                </CardContent>
+            </Card>
         </motion.div>
     );
 }
+

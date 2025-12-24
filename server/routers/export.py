@@ -149,3 +149,42 @@ async def download_data(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
+
+@router.get("/export/pipeline/{session_id}")
+async def export_pipeline(
+    session_id: str,
+    format: Literal["pandas"] = "pandas"
+):
+    """
+    Export the preprocessing pipeline as Python code.
+    
+    The generated code reproduces all transformations applied through the UI.
+    
+    - format: 'pandas' (default) - generates Pandas-based preprocessing script
+    
+    Response:
+    - Content-Type: text/x-python
+    - File download: preprocessing_pipeline.py
+    """
+    try:
+        from pipeline.generator import generate_pipeline_code
+        
+        code = generate_pipeline_code(session_id, format=format)
+        
+        content = code.encode("utf-8")
+        
+        return StreamingResponse(
+            io.BytesIO(content),
+            media_type="text/x-python",
+            headers={
+                "Content-Disposition": "attachment; filename=preprocessing_pipeline.py",
+                "Content-Length": str(len(content))
+            }
+        )
+        
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating pipeline: {str(e)}")

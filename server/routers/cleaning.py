@@ -199,6 +199,25 @@ async def apply_cleaning(request: CleaningRequest):
         cleaned_path = session_path / "data_cleaned.parquet"
         df.to_parquet(cleaned_path, index=False)
         
+        # Log pipeline step
+        from pipeline.manifest import append_step, build_cleaning_step
+        # Map action types to strategy names for the manifest
+        strategy_map = {
+            "drop_rows": "drop",
+            "fill_mean": "mean",
+            "fill_median": "median",
+            "fill_mode": "mode"
+        }
+        missing_values = [
+            {"column": action.column, "strategy": strategy_map.get(action.action, action.action)}
+            for action in request.actions
+        ]
+        step = build_cleaning_step(
+            remove_duplicates=request.remove_duplicates,
+            missing_values=missing_values
+        )
+        append_step(session_path, step)
+        
         cleaned_rows = len(df)
         total_removed = original_rows - cleaned_rows
         

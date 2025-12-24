@@ -106,6 +106,10 @@ async def upload_file(file: UploadFile = File(...)):
         parquet_path = session_path / "data_raw.parquet"
         df.to_parquet(parquet_path, index=False)
         
+        # Initialize pipeline manifest
+        from pipeline.manifest import create_manifest
+        create_manifest(session_path, row_count=len(df), column_count=len(df.columns))
+        
         # Extract column info
         columns = [infer_column_info(df, col) for col in df.columns]
         

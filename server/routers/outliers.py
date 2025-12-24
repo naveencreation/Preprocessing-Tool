@@ -225,6 +225,16 @@ async def treat_outliers(request: OutlierTreatmentRequest):
         outliers_path = session_path / "data_outliers.parquet"
         df.to_parquet(outliers_path, index=False)
         
+        # Log pipeline step
+        from pipeline.manifest import append_step, build_outliers_step
+        step = build_outliers_step(
+            method=request.method,
+            treatment=request.treatment,
+            threshold=request.threshold,
+            columns=request.columns
+        )
+        append_step(session_path, step)
+        
         final_rows = len(df)
         rows_removed = original_rows - final_rows
         

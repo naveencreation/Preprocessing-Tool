@@ -116,6 +116,15 @@ async def split_data(request: SplitRequest):
         train_df.to_parquet(train_path, index=False)
         test_df.to_parquet(test_path, index=False)
         
+        # Log pipeline step
+        from pipeline.manifest import append_step, build_split_step
+        step = build_split_step(
+            test_size=test_size,
+            random_state=request.random_state,
+            shuffle=request.shuffle
+        )
+        append_step(session_path, step)
+        
         train_rows = len(train_df)
         test_rows = len(test_df)
         

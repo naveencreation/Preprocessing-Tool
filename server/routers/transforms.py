@@ -186,6 +186,20 @@ async def apply_transforms(request: TransformRequest):
         transformed_path = session_path / "data_transformed.parquet"
         df.to_parquet(transformed_path, index=False)
         
+        # Log pipeline step
+        from pipeline.manifest import append_step, build_transforms_step
+        scaling = []
+        encoding = []
+        for t in request.transforms:
+            if t.transform == "standard_scale":
+                scaling.append({"column": t.column, "method": "standard"})
+            elif t.transform == "minmax_scale":
+                scaling.append({"column": t.column, "method": "minmax"})
+            elif t.transform == "onehot_encode":
+                encoding.append({"column": t.column, "method": "one_hot"})
+        step = build_transforms_step(scaling=scaling, encoding=encoding)
+        append_step(session_path, step)
+        
         final_cols = len(df.columns)
         
         message_parts = []
