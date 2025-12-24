@@ -137,7 +137,7 @@ async def download_data(
             io.BytesIO(content),
             media_type=media_type,
             headers={
-                "Content-Disposition": f"attachment; filename={filename}",
+                "Content-Disposition": f'attachment; filename="{filename}"',
                 "Content-Length": str(len(content))
             }
         )
@@ -177,7 +177,7 @@ async def export_pipeline(
             io.BytesIO(content),
             media_type="text/x-python",
             headers={
-                "Content-Disposition": "attachment; filename=preprocessing_pipeline.py",
+                "Content-Disposition": 'attachment; filename="preprocessing_pipeline.py"',
                 "Content-Length": str(len(content))
             }
         )
@@ -188,3 +188,41 @@ async def export_pipeline(
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating pipeline: {str(e)}")
+
+
+@router.get("/export/notebook/{session_id}")
+async def export_notebook(session_id: str):
+    """
+    Export the preprocessing pipeline as a Jupyter Notebook.
+    
+    The notebook contains one cell pair (markdown + code) per preprocessing step.
+    Generated from pipeline.json, not from data inspection.
+    
+    Response:
+    - Content-Type: application/x-ipynb+json
+    - File download: preprocessing_pipeline.ipynb
+    """
+    try:
+        from pipeline.notebook_renderer import generate_notebook, notebook_to_string
+        
+        nb = generate_notebook(session_id)
+        content = notebook_to_string(nb)
+        
+        # Encode to bytes first to get correct Content-Length
+        content_bytes = content.encode("utf-8")
+        
+        return StreamingResponse(
+            io.BytesIO(content_bytes),
+            media_type="application/x-ipynb+json",
+            headers={
+                "Content-Disposition": 'attachment; filename="preprocessing_pipeline.ipynb"',
+                "Content-Length": str(len(content_bytes))
+            }
+        )
+        
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error generating notebook: {str(e)}")
+
+

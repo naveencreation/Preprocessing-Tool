@@ -9,6 +9,7 @@ import {
     Check,
     PartyPopper,
     Code,
+    FileCode,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -77,7 +78,6 @@ export function ExportPanel() {
                 throw new Error(`Download failed: ${response.status}`);
             }
 
-            // Get proper MIME type for the blob
             const mimeTypes: Record<ExportFormat, string> = {
                 csv: "text/csv;charset=utf-8",
                 parquet: "application/octet-stream",
@@ -109,47 +109,39 @@ export function ExportPanel() {
         }
     };
 
+
+
     const handleDownloadPipeline = async () => {
         if (!sessionId) return;
 
-        setDownloading("pipeline");
+        // Use hidden link with download attribute to force filename
+        // This takes precedence over Content-Disposition for same-origin requests
+        const link = document.createElement("a");
+        link.href = `/api/export/pipeline/${sessionId}?format=pandas`;
+        link.download = "preprocessing_pipeline.py";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
-        try {
-            const response = await fetch(`/api/export/pipeline/${sessionId}?format=pandas`);
-
-            if (!response.ok) {
-                const contentType = response.headers.get("content-type");
-                if (contentType && contentType.includes("application/json")) {
-                    const err: ApiError = await response.json();
-                    throw new Error(err.detail || "Download failed");
-                }
-                throw new Error(`Download failed: ${response.status}`);
-            }
-
-            const text = await response.text();
-
-            if (!text) {
-                throw new Error("Downloaded file is empty");
-            }
-
-            const blob = new Blob([text], { type: "text/x-python;charset=utf-8" });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "preprocessing_pipeline.py";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-
-            toast.success("Pipeline downloaded", { description: "preprocessing_pipeline.py" });
-        } catch (e) {
-            const message = e instanceof Error ? e.message : "Download failed";
-            toast.error("Error", { description: message });
-        } finally {
-            setDownloading(null);
-        }
+        toast.success("Pipeline download started");
     };
+
+    const handleDownloadNotebook = async () => {
+        if (!sessionId) return;
+
+        // Use hidden link with download attribute to force filename
+        // This takes precedence over Content-Disposition for same-origin requests
+        const link = document.createElement("a");
+        link.href = `/api/export/notebook/${sessionId}`;
+        link.download = "preprocessing_pipeline.ipynb";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast.success("Notebook download started");
+    };
+
+
 
     if (isLoading) {
         return (
@@ -330,7 +322,7 @@ export function ExportPanel() {
                 </Card>
             )}
 
-            {/* Python Pipeline Export */}
+            {/* Reproducible Pipeline Export */}
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -338,10 +330,10 @@ export function ExportPanel() {
                         Reproducible Pipeline
                     </CardTitle>
                     <CardDescription>
-                        Download Python code that reproduces all preprocessing steps
+                        Download code that reproduces all preprocessing steps
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-3">
                     <Button
                         variant="default"
                         className="w-full justify-start gap-3 h-auto py-4"
@@ -351,7 +343,20 @@ export function ExportPanel() {
                         {downloading === "pipeline" ? <Spinner size="sm" /> : <Code className="h-5 w-5" />}
                         <div className="text-left">
                             <p className="font-medium">Download Python Pipeline</p>
-                            <p className="text-xs opacity-80">Standalone script with pandas & scikit-learn</p>
+                            <p className="text-xs opacity-80">Standalone .py script</p>
+                        </div>
+                        <Download className="h-4 w-4 ml-auto" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="w-full justify-start gap-3 h-auto py-4"
+                        onClick={handleDownloadNotebook}
+                        disabled={downloading === "notebook"}
+                    >
+                        {downloading === "notebook" ? <Spinner size="sm" /> : <FileCode className="h-5 w-5" />}
+                        <div className="text-left">
+                            <p className="font-medium">Download Notebook</p>
+                            <p className="text-xs text-muted-foreground">Jupyter .ipynb with explanations</p>
                         </div>
                         <Download className="h-4 w-4 ml-auto" />
                     </Button>
@@ -360,4 +365,3 @@ export function ExportPanel() {
         </motion.div>
     );
 }
-

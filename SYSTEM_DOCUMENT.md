@@ -643,11 +643,20 @@ flowchart LR
     Router --> Parquet["Write .parquet"]
     Router --> Manifest["Append to pipeline.json"]
     
-    Export["GET /export/pipeline"] --> Generator["generator.py"]
-    Generator --> Manifest
-    Generator --> Template["pandas.py.j2"]
-    Template --> Code["preprocessing_pipeline.py"]
+    subgraph Renderers["Equivalent Renderers"]
+        Generator["generate_stepwise_code()"]
+        PyExport["Python (.py)"]
+        NbExport["Notebook (.ipynb)"]
+    end
+    
+    Export["GET /export/pipeline"] --> Generator
+    NotebookExport["GET /export/notebook"] --> Generator
+    Generator --> PyExport
+    Generator --> NbExport
 ```
+
+> [!IMPORTANT]
+> Python and Notebook exports are **equivalent renderers**. Both use `generate_stepwise_code()` as the SINGLE interpreter of `pipeline.json`. Duplicating logic elsewhere is a BUG.
 
 ### Generated Code Guarantees
 
@@ -657,6 +666,8 @@ flowchart LR
 | Order-preserving | Steps rendered in manifest order |
 | Explicit parameters | No hidden defaults |
 | Deterministic | Same manifest → same code |
+| Equivalent output | Python and Notebook produce identical results |
+
 
 ---
 

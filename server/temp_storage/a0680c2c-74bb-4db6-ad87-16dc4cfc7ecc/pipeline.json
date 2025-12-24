@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "created_at": "2025-12-24T13:28:16.915152Z",
+  "dataset": {
+    "rows": 302,
+    "columns": 14
+  },
+  "steps": [
+    {
+      "type": "outliers",
+      "method": "iqr",
+      "treatment": "cap",
+      "threshold": 1.5,
+      "columns": [
+        "trestbps",
+        "chol",
+        "fbs",
+        "thalach",
+        "oldpeak",
+        "ca",
+        "thal"
+      ],
+      "applied_at": "2025-12-24T13:28:30.548891Z"
+    }
+  ]
+}
