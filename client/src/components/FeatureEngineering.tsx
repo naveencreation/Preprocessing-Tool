@@ -10,10 +10,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 import { usePipelineStore } from "@/store/usePipelineStore";
 import type {
     TransformColumnsResponse,
@@ -200,15 +206,16 @@ export function FeatureEngineering() {
             )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Numeric Scaling Card */}
                 <Card>
-                    <CardHeader>
+                    <CardHeader className="pb-4">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="flex items-center gap-2">
                                     <ChartBar className="h-5 w-5" />
                                     Numeric Scaling
                                 </CardTitle>
-                                <CardDescription>Apply StandardScaler or MinMaxScaler</CardDescription>
+                                <CardDescription>Scale numeric features for ML models</CardDescription>
                             </div>
                             <div className="flex gap-1">
                                 <Button variant="ghost" size="sm" onClick={() => selectAllNumeric("standard_scale")}>
@@ -223,42 +230,80 @@ export function FeatureEngineering() {
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent>
                         {columnsData?.numeric_columns.length === 0 ? (
-                            <p className="text-muted-foreground text-center py-4">No numeric columns</p>
+                            <p className="text-muted-foreground text-center py-8">No numeric columns</p>
                         ) : (
-                            columnsData?.numeric_columns.map((col) => (
-                                <div key={col.name} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                                    <div>
-                                        <p className="font-mono text-sm font-medium">{col.name}</p>
-                                        <p className="text-xs text-muted-foreground">{col.dtype}</p>
-                                    </div>
-                                    <RadioGroup
-                                        value={numericTransforms.get(col.name) || "none"}
-                                        onValueChange={(val) => handleNumericTransform(col.name, val as NumericTransform)}
-                                        className="flex gap-4"
-                                    >
-                                        <div className="flex items-center space-x-1">
-                                            <RadioGroupItem value="none" id={`${col.name}-none`} />
-                                            <Label htmlFor={`${col.name}-none`} className="text-xs cursor-pointer">None</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-1">
-                                            <RadioGroupItem value="standard_scale" id={`${col.name}-std`} />
-                                            <Label htmlFor={`${col.name}-std`} className="text-xs cursor-pointer">Std</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-1">
-                                            <RadioGroupItem value="minmax_scale" id={`${col.name}-mm`} />
-                                            <Label htmlFor={`${col.name}-mm`} className="text-xs cursor-pointer">MM</Label>
-                                        </div>
-                                    </RadioGroup>
-                                </div>
-                            ))
+                            <div className="rounded-md border overflow-hidden">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[140px]">Column</TableHead>
+                                            <TableHead className="w-[80px] text-center">Type</TableHead>
+                                            <TableHead className="w-[60px] text-center">None</TableHead>
+                                            <TableHead className="w-[80px] text-center">Standard</TableHead>
+                                            <TableHead className="w-[80px] text-center">MinMax</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {columnsData?.numeric_columns.map((col) => {
+                                            const currentValue = numericTransforms.get(col.name) || "none";
+                                            return (
+                                                <TableRow key={col.name}>
+                                                    <TableCell className="font-mono text-sm font-medium">
+                                                        {col.name}
+                                                    </TableCell>
+                                                    <TableCell className="text-center">
+                                                        <Badge variant="secondary" className="text-xs">
+                                                            {col.dtype}
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell className="text-center">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleNumericTransform(col.name, "none")}
+                                                            className={`w-4 h-4 rounded-full border-2 transition-colors ${currentValue === "none"
+                                                                    ? "border-primary bg-primary"
+                                                                    : "border-muted-foreground/30 hover:border-primary/50"
+                                                                }`}
+                                                            aria-label="No scaling"
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell className="text-center">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleNumericTransform(col.name, "standard_scale")}
+                                                            className={`w-4 h-4 rounded-full border-2 transition-colors ${currentValue === "standard_scale"
+                                                                    ? "border-primary bg-primary"
+                                                                    : "border-muted-foreground/30 hover:border-primary/50"
+                                                                }`}
+                                                            aria-label="Standard scaling"
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell className="text-center">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleNumericTransform(col.name, "minmax_scale")}
+                                                            className={`w-4 h-4 rounded-full border-2 transition-colors ${currentValue === "minmax_scale"
+                                                                    ? "border-primary bg-primary"
+                                                                    : "border-muted-foreground/30 hover:border-primary/50"
+                                                                }`}
+                                                            aria-label="MinMax scaling"
+                                                        />
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </TableBody>
+                                </Table>
+                            </div>
                         )}
                     </CardContent>
                 </Card>
 
+                {/* Categorical Encoding Card */}
                 <Card>
-                    <CardHeader>
+                    <CardHeader className="pb-4">
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle className="flex items-center gap-2">
@@ -277,32 +322,48 @@ export function FeatureEngineering() {
                             </div>
                         </div>
                     </CardHeader>
-                    <CardContent className="space-y-3">
+                    <CardContent>
                         {columnsData?.categorical_columns.length === 0 ? (
-                            <p className="text-muted-foreground text-center py-4">No categorical columns</p>
+                            <p className="text-muted-foreground text-center py-8">No categorical columns</p>
                         ) : (
-                            columnsData?.categorical_columns.map((col) => (
-                                <div
-                                    key={col.name}
-                                    className={`flex items-center justify-between p-3 rounded-lg transition-colors ${categoricalEncode.has(col.name) ? "bg-primary/10 ring-1 ring-primary" : "bg-muted/30"
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <Checkbox
-                                            id={`encode-${col.name}`}
-                                            checked={categoricalEncode.has(col.name)}
-                                            onCheckedChange={() => toggleCategoricalEncode(col.name)}
-                                        />
-                                        <div>
-                                            <Label htmlFor={`encode-${col.name}`} className="font-mono text-sm font-medium cursor-pointer">
-                                                {col.name}
-                                            </Label>
-                                            <p className="text-xs text-muted-foreground">{col.unique_count} unique</p>
-                                        </div>
-                                    </div>
-                                    <Badge variant="outline">{col.dtype}</Badge>
-                                </div>
-                            ))
+                            <div className="rounded-md border overflow-hidden">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[50px] text-center">Encode</TableHead>
+                                            <TableHead className="w-[140px]">Column</TableHead>
+                                            <TableHead className="w-[80px] text-center">Type</TableHead>
+                                            <TableHead className="w-[80px] text-center">Unique</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {columnsData?.categorical_columns.map((col) => (
+                                            <TableRow
+                                                key={col.name}
+                                                className={categoricalEncode.has(col.name) ? "bg-primary/5" : ""}
+                                            >
+                                                <TableCell className="text-center">
+                                                    <Checkbox
+                                                        checked={categoricalEncode.has(col.name)}
+                                                        onCheckedChange={() => toggleCategoricalEncode(col.name)}
+                                                    />
+                                                </TableCell>
+                                                <TableCell className="font-mono text-sm font-medium">
+                                                    {col.name}
+                                                </TableCell>
+                                                <TableCell className="text-center">
+                                                    <Badge variant="secondary" className="text-xs">
+                                                        {col.dtype}
+                                                    </Badge>
+                                                </TableCell>
+                                                <TableCell className="text-center tabular-nums">
+                                                    {col.unique_count}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
                         )}
                     </CardContent>
                 </Card>
@@ -312,10 +373,11 @@ export function FeatureEngineering() {
                 <div className="flex justify-end">
                     <Button onClick={applyTransforms} disabled={isTransforming} className="gap-2">
                         {isTransforming ? <Spinner size="sm" /> : <Check className="h-4 w-4" />}
-                        Apply ({totalSelected})
+                        Apply {totalSelected} Transform{totalSelected > 1 ? "s" : ""}
                     </Button>
                 </div>
             )}
         </motion.div>
     );
 }
+

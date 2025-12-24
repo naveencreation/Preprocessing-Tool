@@ -46,77 +46,107 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Premium Violet Design System - Light Mode */
+  --background: #F4F6FF;
+  --foreground: #1F1B3A;
+
+  --card: #ECEFFF;
+  --card-foreground: #1F1B3A;
+
+  --popover: #ECEFFF;
+  --popover-foreground: #1F1B3A;
+
+  --primary: #7C6EE6;
+  --primary-hover: #6F62D9;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #E6E9FF;
+  --secondary-foreground: #1F1B3A;
+
+  --muted: #E6E9FF;
+  --muted-foreground: rgba(31, 27, 58, 0.68);
+
+  --accent: #7C6EE6;
+  --accent-foreground: #FFFFFF;
+
+  --destructive: #E55B5B;
+
+  --border: rgba(31, 27, 58, 0.08);
+  --input: rgba(31, 27, 58, 0.12);
+  --ring: #7C6EE6;
+
+  /* Charts - Violet spectrum */
+  --chart-1: #7C6EE6;
+  --chart-2: #6F62D9;
+  --chart-3: #5B4FC7;
+  --chart-4: #9A8FED;
+  --chart-5: #B8B0F4;
+
+  /* Sidebar */
+  --sidebar: #ECEFFF;
+  --sidebar-foreground: #1F1B3A;
+  --sidebar-primary: #7C6EE6;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E6E9FF;
+  --sidebar-accent-foreground: #1F1B3A;
+  --sidebar-border: rgba(31, 27, 58, 0.08);
+  --sidebar-ring: #7C6EE6;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Premium Violet Design System - Dark Mode */
+  --background: #121022;
+  --foreground: #F3F4FF;
+
+  --card: #1A1733;
+  --card-foreground: #F3F4FF;
+
+  --popover: #1A1733;
+  --popover-foreground: #F3F4FF;
+
+  --primary: #7C6EE6;
+  --primary-hover: #6F62D9;
+  --primary-foreground: #121022;
+
+  --secondary: #211D40;
+  --secondary-foreground: #F3F4FF;
+
+  --muted: #211D40;
+  --muted-foreground: rgba(243, 244, 255, 0.7);
+
+  --accent: #7C6EE6;
+  --accent-foreground: #121022;
+
+  --destructive: #F87171;
+
+  --border: rgba(243, 244, 255, 0.08);
+  --input: rgba(243, 244, 255, 0.12);
+  --ring: #7C6EE6;
+
+  /* Charts - Violet spectrum (dark mode) */
+  --chart-1: #7C6EE6;
+  --chart-2: #9A8FED;
+  --chart-3: #B8B0F4;
+  --chart-4: #6F62D9;
+  --chart-5: #5B4FC7;
+
+  /* Sidebar */
+  --sidebar: #1A1733;
+  --sidebar-foreground: #F3F4FF;
+  --sidebar-primary: #7C6EE6;
+  --sidebar-primary-foreground: #121022;
+  --sidebar-accent: #211D40;
+  --sidebar-accent-foreground: #F3F4FF;
+  --sidebar-border: rgba(243, 244, 255, 0.08);
+  --sidebar-ring: #7C6EE6;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

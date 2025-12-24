@@ -221,41 +221,43 @@ export function HealthDashboard() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-[200px]">Column</TableHead>
-                                    <TableHead className="w-[100px]">Type</TableHead>
-                                    <TableHead className="w-[100px] text-right">Unique</TableHead>
-                                    <TableHead className="w-[150px]">Missing %</TableHead>
-                                    <TableHead className="w-[80px] text-right">Missing</TableHead>
-                                    <TableHead className="w-[100px]">Status</TableHead>
+                                    <TableHead className="w-[180px] text-center">Column</TableHead>
+                                    <TableHead className="w-[100px] text-center">Type</TableHead>
+                                    <TableHead className="w-[80px] text-center">Unique</TableHead>
+                                    <TableHead className="w-[200px] text-center">Missing %</TableHead>
+                                    <TableHead className="w-[80px] text-center">Missing</TableHead>
+                                    <TableHead className="w-[100px] text-center">Status</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {diagnostics.columns.map((col) => (
                                     <TableRow key={col.name}>
-                                        <TableCell className="font-mono text-sm font-medium">
+                                        <TableCell className="font-mono text-sm font-medium text-center">
                                             {col.name}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="text-center">
                                             <Badge variant="secondary">{col.dtype}</Badge>
                                         </TableCell>
-                                        <TableCell className="text-right tabular-nums">
+                                        <TableCell className="text-center tabular-nums">
                                             {col.unique_count.toLocaleString()}
                                         </TableCell>
                                         <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                <Progress
-                                                    value={col.missing_percentage}
-                                                    className="h-2 flex-1"
-                                                />
-                                                <span className={`text-sm tabular-nums w-12 text-right ${getMissingColor(col.missing_percentage)}`}>
+                                            <div className="flex items-center justify-center gap-3 min-w-0">
+                                                <div className="w-[100px]">
+                                                    <Progress
+                                                        value={col.missing_percentage}
+                                                        className="h-2"
+                                                    />
+                                                </div>
+                                                <span className={`text-sm tabular-nums shrink-0 ${getMissingColor(col.missing_percentage)}`}>
                                                     {col.missing_percentage}%
                                                 </span>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="text-right tabular-nums">
+                                        <TableCell className="text-center tabular-nums">
                                             {col.missing_count.toLocaleString()}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="text-center">
                                             {col.is_constant ? (
                                                 <Badge variant="outline" className="text-amber-600">
                                                     Constant
