@@ -123,3 +123,5 @@ temp/
 !pnpm-lock.yaml
 .vercel
 .turbo
+
+extra/
